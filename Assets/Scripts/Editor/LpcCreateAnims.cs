@@ -93,12 +93,12 @@ public class LpcCreateAnims
                     var idleClip = CreateAnimationClip("Idle" + anim.Key.direction, framesPerSecond, loop, new List<Sprite>(anim.Value.Take(1)));
 
                     filename = path + "/" + idleClip.name + ".anim";
-                    CreateOrReplaceAsset<AnimationClip>(idleClip, filename);
+                    AssetUtils.CreateOrReplaceAsset<AnimationClip>(idleClip, filename);
 
                     var clip = CreateAnimationClip(anim.Key.state.ToString() + anim.Key.direction, framesPerSecond, loop, new List<Sprite>(anim.Value.Skip(1).Take(8)));
 
                     filename = path + "/" + clip.name + ".anim";
-                    CreateOrReplaceAsset<AnimationClip>(clip, filename);
+                    AssetUtils.CreateOrReplaceAsset<AnimationClip>(clip, filename);
                 }
                 else if (anim.Key.state == LpcSpriteProcessor.LpcAnimationState.Shoot)
                 {
@@ -106,19 +106,19 @@ public class LpcCreateAnims
                     var shootBegin = CreateAnimationClip("ShootBegin" + anim.Key.direction, framesPerSecond, false, new List<Sprite>(anim.Value.Take(5)));
 
                     filename = path + "/" + shootBegin.name + ".anim";
-                    CreateOrReplaceAsset<AnimationClip>(shootBegin, filename);
+                    AssetUtils.CreateOrReplaceAsset<AnimationClip>(shootBegin, filename);
 
                     var clip = CreateAnimationClip("Shoot" + anim.Key.direction, framesPerSecond, true, new List<Sprite>(anim.Value.Skip(5).Take(7)));
 
                     filename = path + "/" + clip.name + ".anim";
-                    CreateOrReplaceAsset<AnimationClip>(clip, filename);
+                    AssetUtils.CreateOrReplaceAsset<AnimationClip>(clip, filename);
                 }
                 else
                 {
                     var clip = CreateAnimationClip(anim.Key.state.ToString() + anim.Key.direction, framesPerSecond, loop, anim.Value);
 
                     filename = path + "/" + clip.name + ".anim";
-                    CreateOrReplaceAsset<AnimationClip>(clip, filename);
+                    AssetUtils.CreateOrReplaceAsset<AnimationClip>(clip, filename);
                 }
             }
 
@@ -156,7 +156,7 @@ public class LpcCreateAnims
             controller.ApplyOverrides(overrides);
 
             filename = path + "/" + Path.GetFileNameWithoutExtension(assetPath) + ".controller";
-            CreateOrReplaceAsset<AnimatorOverrideController>(controller, filename);
+            AssetUtils.CreateOrReplaceAsset<AnimatorOverrideController>(controller, filename);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -215,22 +215,5 @@ public class LpcCreateAnims
         }
 
         return true;
-    }
-
-    static T CreateOrReplaceAsset<T>(T asset, string path) where T : Object
-    {
-        T existingAsset = AssetDatabase.LoadAssetAtPath<T>(path);
-
-        if (existingAsset == null)
-        {
-            AssetDatabase.CreateAsset(asset, path);
-            existingAsset = asset;
-        }
-        else
-        {
-            EditorUtility.CopySerialized(asset, existingAsset);
-        }
-
-        return existingAsset;
     }
 }
