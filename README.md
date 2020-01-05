@@ -8,7 +8,12 @@ Comming soon...
 
 ## Tech stuff
 
-Comming soon...
+* Adapted bitcula's [Universal LPC Spritesheet Unity Importer] to auto slice the LPC sprites. LPC spritesheets filename must start with "LPC_".
+* Created a helper Editor script (accessible by right-clicking on a LPC image, selecting Assets>LPC>Create Animations) that create the animation override controller and the animation clips for any LPC spritesheet. The base animation controller is hardcoded to be on the "Assets/Animations/Base/BaseAnimations.controller" file, but you can easily change that.
+* Created a custom shader for sprites in 3d space, featuring:
+  * Uses emissive and normal secondary textures on the sprite
+  * Has a flash functionality, which uses the alpha channel of the color to lerp between base color and the texture, for effects
+  * Has correct shadows (needed to expose a AlphaThreshould variable on the shader)
 
 ## Credits
 
