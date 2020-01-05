@@ -14,6 +14,7 @@ Comming soon...
   * Uses emissive and normal secondary textures on the sprite
   * Has a flash functionality, which uses the alpha channel of the color to lerp between base color and the texture, for effects
   * Has correct shadows (needed to expose a AlphaThreshould variable on the shader)
+* Cave map is procedurally generated using a parametrized celular automata (underpopulation at 2, no overpopulation, birth from 4 onwards). If you don't know what this means, check out this article on how to [Generate Random Cave Levels Using Cellular Automata]. You can also check Wikipedia's article on Celular Automata and Conway's Game of Life (just because they're cool!)
 
 ## Credits
 
@@ -40,3 +41,4 @@ LPC art made available through the [GPLv3] and [CC-BY-SA 3.0.] licenses.
 [Bfxr]:https://www.bfxr.net/
 [Universal LPC Spritesheet Character Generator]:https://sanderfrenken.github.io/
 [Universal LPC Spritesheet Unity Importer]:https://github.com/bitcula/Universal-LPC-Spritesheet-Unity-Importer
+[Generate Random Cave Levels Using Cellular Automata]:https://gamedevelopment.tutsplus.com/tutorials/generate-random-cave-levels-using-cellular-automata--gamedev-9664
