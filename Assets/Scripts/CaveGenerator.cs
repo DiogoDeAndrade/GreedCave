@@ -10,6 +10,13 @@ public class CaveGenerator : MonoBehaviour
 {
     public Vector2Int   size = new Vector2Int(64, 64);
     public int          seed = 0;
+    public bool         genCubeWorld = true;
+    [ShowIf("genCubeWorld")]
+    public Transform    targetGen;
+    public Material     groundMaterial;
+    public Material     wallMaterial;
+    public Vector2Int   sectionSize = new Vector2Int(32, 32);
+    public Vector3      tileSize = new Vector3(1,1,1);
     public bool         debug = false;
     [ShowIf("debug")]
     public Texture2D    targetTexture;
@@ -119,6 +126,44 @@ public class CaveGenerator : MonoBehaviour
             return;
         }
 
+        if (genCubeWorld)
+        {
+            CubeWorldGen cwg = new CubeWorldGen(sectionSize.x, sectionSize.y, tileSize);
+            List<Mesh>   meshes = new List<Mesh>();
+
+            cwg.GetMeshes(heightmap, ref meshes);
+
+            if (targetGen != null)
+            {
+                while (targetGen.transform.childCount > 0)
+                {
+#if UNITY_EDITOR
+                    if (Application.isPlaying)
+                    {
+                        Destroy(targetGen.transform.GetChild(0).gameObject);
+                    }
+                    else
+                    {
+                        DestroyImmediate(targetGen.transform.GetChild(0).gameObject);
+                    }
+#else
+                    Destroy(targetGen.transform.GetChild(0).gameObject);
+#endif
+                }
+            }
+
+            foreach (var mesh in meshes)
+            {
+                GameObject go = new GameObject();
+                go.transform.parent = targetGen;
+                go.name = mesh.name;
+                MeshFilter meshFilter = go.AddComponent<MeshFilter>();
+                meshFilter.mesh = mesh;
+                MeshRenderer meshRenderer = go.AddComponent<MeshRenderer>();
+//                meshRenderer.materials = new List<Material>() { groundMaterial, wallMaterial }.ToArray();
+                meshRenderer.materials = new List<Material>() { groundMaterial }.ToArray();
+            }
+        }
 
 #if UNITY_EDITOR
         if (debug)
