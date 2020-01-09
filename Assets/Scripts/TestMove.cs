@@ -1,20 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using NaughtyAttributes;
 
 public class TestMove : MonoBehaviour
 {
-    Animator        anim;
-    SpriteRenderer  spriteRenderer;
-    Vector2         lastMoveDir = new Vector2(0.0f, -1.0f);
-    Material        spriteMaterial;
-    Coroutine       flashCR;
+    public GameObject      gfxObject;
+    public bool            enableMove = false;
+    [ShowIf("enableMove")]
+    public float           moveSpeed = 1.0f;
+    [ShowIf("enableMove"), Range(0,1)]
+    public float           drag = 0.1f;
+
+    Animator            anim;
+    SpriteRenderer      spriteRenderer;
+    CharacterController charController;
+
+    Vector2             lastMoveDir = new Vector2(0.0f, -1.0f);
+    Material            spriteMaterial;
+    Coroutine           flashCR;
 
     void Start()
     {
-        anim = GetComponent<Animator>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = gfxObject.GetComponent<Animator>();
+        spriteRenderer = gfxObject.GetComponent<SpriteRenderer>();
         spriteMaterial = spriteRenderer.material;
+        charController = GetComponent<CharacterController>();
     }
 
     void Update()
@@ -51,6 +62,11 @@ public class TestMove : MonoBehaviour
                 StopCoroutine(flashCR);
             }
             flashCR = StartCoroutine(FlashCR());
+        }
+
+        if (enableMove)
+        {
+            charController.Move(new Vector3(mv.x * moveSpeed * Time.deltaTime, 0.0f, mv.y * moveSpeed * Time.deltaTime));
         }
     }
 

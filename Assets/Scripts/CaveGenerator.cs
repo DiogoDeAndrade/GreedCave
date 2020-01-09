@@ -17,6 +17,8 @@ public class CaveGenerator : MonoBehaviour
     public Material     wallMaterial;
     public Vector2Int   sectionSize = new Vector2Int(32, 32);
     public Vector3      tileSize = new Vector3(1,1,1);
+    public bool         genColliders = true;
+    public bool         useMeshCollider = true;
     public bool         debug = false;
     [ShowIf("debug")]
     public Texture2D    targetTexture;
@@ -24,7 +26,13 @@ public class CaveGenerator : MonoBehaviour
     Heightmap   heightmap;
     Vector2Int  spawnPos;
     Vector2Int  exitPos;
-    
+
+    private void Start()
+    {
+//        seed = Mathf.FloorToInt(Time.time);
+        Generate();
+    }
+
     [Button("Generate")]
     void Generate()
     {
@@ -129,6 +137,8 @@ public class CaveGenerator : MonoBehaviour
         if (genCubeWorld)
         {
             CubeWorldGen cwg = new CubeWorldGen(sectionSize.x, sectionSize.y, tileSize);
+            cwg.SetNoise(new Vector3(0.1234f, 0.2312f, 0.3221f), 1.0f);
+            cwg.SetReuse(false);
             List<Mesh>   meshes = new List<Mesh>();
 
             cwg.GetMeshes(heightmap, ref meshes);
@@ -156,12 +166,17 @@ public class CaveGenerator : MonoBehaviour
             {
                 GameObject go = new GameObject();
                 go.transform.parent = targetGen;
+                go.transform.localPosition = Vector3.zero;
                 go.name = mesh.name;
                 MeshFilter meshFilter = go.AddComponent<MeshFilter>();
                 meshFilter.mesh = mesh;
                 MeshRenderer meshRenderer = go.AddComponent<MeshRenderer>();
-//                meshRenderer.materials = new List<Material>() { groundMaterial, wallMaterial }.ToArray();
-                meshRenderer.materials = new List<Material>() { groundMaterial }.ToArray();
+                meshRenderer.materials = new List<Material>() { groundMaterial, wallMaterial }.ToArray();
+
+                if ((genColliders) && (useMeshCollider))
+                {
+                    go.AddComponent<MeshCollider>();
+                }
             }
         }
 
