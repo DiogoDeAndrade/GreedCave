@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
+using UnityEngine.AI;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -18,7 +19,11 @@ public class CaveGenerator : MonoBehaviour
     public Vector2Int   sectionSize = new Vector2Int(32, 32);
     public Vector3      tileSize = new Vector3(1,1,1);
     public bool         genColliders = true;
+    [ShowIf("genColliders")]
     public bool         useMeshCollider = true;
+    public bool         genNavMesh = true;
+    [ShowIf("genNavMesh")]
+    public GameObject   navMeshTarget;
     public bool         debug = false;
     [ShowIf("debug")]
     public Texture2D    targetTexture;
@@ -145,19 +150,26 @@ public class CaveGenerator : MonoBehaviour
 
             if (targetGen != null)
             {
-                while (targetGen.transform.childCount > 0)
+                List<Transform> toDestroy = new List<Transform>();
+
+                foreach (Transform t in targetGen.transform)
+                {
+                    toDestroy.Add(t);
+                }
+
+                foreach (var t in toDestroy)
                 {
 #if UNITY_EDITOR
                     if (Application.isPlaying)
                     {
-                        Destroy(targetGen.transform.GetChild(0).gameObject);
+                        Destroy(t.gameObject);
                     }
                     else
                     {
-                        DestroyImmediate(targetGen.transform.GetChild(0).gameObject);
+                        DestroyImmediate(t.gameObject);
                     }
 #else
-                    Destroy(targetGen.transform.GetChild(0).gameObject);
+                    Destroy(t.gameObject);
 #endif
                 }
             }
@@ -178,6 +190,11 @@ public class CaveGenerator : MonoBehaviour
                     go.AddComponent<MeshCollider>();
                 }
             }
+
+            if ((genNavMesh) && (navMeshTarget != null))
+            {
+                StartCoroutine(BuildNavMeshCR());
+           }
         }
 
 #if UNITY_EDITOR
@@ -208,6 +225,18 @@ public class CaveGenerator : MonoBehaviour
             }
         }
 #endif
+    }
+
+    IEnumerator BuildNavMeshCR()
+    {
+        yield return null;
+
+        NavMeshSurface surface = navMeshTarget.GetComponent<NavMeshSurface>();
+        if (surface == null)
+        {
+            surface = navMeshTarget.AddComponent<NavMeshSurface>();
+        }
+        surface.BuildNavMesh();
     }
 
     int FloodFill(int[] regions, int x, int y, int region)
