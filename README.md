@@ -24,7 +24,7 @@ Comming soon...
   * Check AUTHORS.TXT file for attribution as far as I could find it
 * LPC import code based on bitcula's [Universal LPC Spritesheet Unity Importer]
 * Rock texture by rubberduck (https://opengameart.org/users/rubberduck)
-* Ground texture by Sasha Gordon Greene (https://opengameart.org/users/ezduzziteh)
+* LowPoly Rocks by SnowFiend Studios (https://assetstore.unity.com/packages/3d/environments/lowpoly-rocks-137970)
 
 ## Licenses
 

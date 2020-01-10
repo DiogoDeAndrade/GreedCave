@@ -9,6 +9,58 @@ using UnityEditor;
 
 public class CaveGenerator : MonoBehaviour
 {
+    [System.Serializable]
+    public struct PropGenProps
+    {
+        public int          count;
+        public Transform    target;
+        public GameObject[] prefabs;
+        public Vector2      scale;
+        public Vector2      rotationX;
+        public Vector2      rotationY;
+        public Vector2      rotationZ;
+
+        public void Generate(Vector3 min, Vector3 max, System.Func<float, float, float, bool> isValid)
+        {
+            if (target != null)
+            {
+                target.gameObject.DeleteAllChildren();
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                int nTries = 0;
+                while (nTries < 20)
+                {
+                    float x = Random.Range(min.x, max.x);
+                    float y = Random.Range(min.y, max.y);
+                    float z = Random.Range(min.z, max.z);
+
+                    if (isValid(x,y,z))
+                    {
+                        int r = Random.Range(0, prefabs.Length);
+
+                        GameObject smallProp = Instantiate(prefabs[r], new Vector3(x, 0, z), Quaternion.identity);
+                        Transform t = smallProp.GetComponent<Transform>();
+                        t.parent = target;
+                        t.localPosition = new Vector3(x, 0, z);
+
+                        float s = Random.Range(scale.x, scale.y);
+                        t.localScale *= s;
+
+                        float rx = Random.Range(rotationX.x, rotationX.y);
+                        float ry = Random.Range(rotationY.x, rotationY.y);
+                        float rz = Random.Range(rotationZ.x, rotationZ.y);
+                        t.localRotation = Quaternion.Euler(rx, ry, rz);
+                        break;
+                    }
+
+                    nTries++;
+                }
+            }
+        }
+    };
+
     public Vector2Int   size = new Vector2Int(64, 64);
     public int          seed = 0;
     public bool         genCubeWorld = true;
@@ -22,6 +74,12 @@ public class CaveGenerator : MonoBehaviour
     [ShowIf("genColliders")]
     public bool         useMeshCollider = true;
     public bool         genNavMesh = true;
+    public bool         genSmallProps = true;
+    [ShowIf("genSmallProps")]
+    public PropGenProps smallProps = new PropGenProps();
+    public bool         genLargeProps = true;
+    [ShowIf("genLargeProps")]
+    public PropGenProps largeProps = new PropGenProps();
     [ShowIf("genNavMesh")]
     public GameObject   navMeshTarget;
     public bool         debug = false;
@@ -144,34 +202,15 @@ public class CaveGenerator : MonoBehaviour
             CubeWorldGen cwg = new CubeWorldGen(sectionSize.x, sectionSize.y, tileSize);
             cwg.SetNoise(new Vector3(0.1234f, 0.2312f, 0.3221f), 1.0f);
             cwg.SetReuse(false);
+            cwg.SetWorldTexCoordFloor(true);
+            cwg.SetWorldTexCoordWall(true);
             List<Mesh>   meshes = new List<Mesh>();
 
             cwg.GetMeshes(heightmap, ref meshes);
 
             if (targetGen != null)
             {
-                List<Transform> toDestroy = new List<Transform>();
-
-                foreach (Transform t in targetGen.transform)
-                {
-                    toDestroy.Add(t);
-                }
-
-                foreach (var t in toDestroy)
-                {
-#if UNITY_EDITOR
-                    if (Application.isPlaying)
-                    {
-                        Destroy(t.gameObject);
-                    }
-                    else
-                    {
-                        DestroyImmediate(t.gameObject);
-                    }
-#else
-                    Destroy(t.gameObject);
-#endif
-                }
+                targetGen.gameObject.DeleteAllChildren();
             }
 
             foreach (var mesh in meshes)
@@ -194,7 +233,33 @@ public class CaveGenerator : MonoBehaviour
             if ((genNavMesh) && (navMeshTarget != null))
             {
                 StartCoroutine(BuildNavMeshCR());
-           }
+            }
+        }
+
+        if (genSmallProps)
+        {
+            smallProps.Generate(new Vector3(0, 0, 0),
+                                new Vector3(tileSize.x * size.x, 0, tileSize.y * size.y),
+                                (x, y, z) =>
+                                {
+                                    int tx = Mathf.FloorToInt(x / tileSize.x);
+                                    int ty = Mathf.FloorToInt(z / tileSize.y);
+
+                                    return (heightmap.Get(tx, ty) <= 0.0f);
+                                });
+        }
+
+        if (genLargeProps)
+        {
+            largeProps.Generate(new Vector3(0, 0, 0),
+                                new Vector3(tileSize.x * size.x, 0, tileSize.y * size.y),
+                                (x, y, z) =>
+                                {
+                                    int tx = Mathf.FloorToInt(x / tileSize.x);
+                                    int ty = Mathf.FloorToInt(z / tileSize.y);
+
+                                    return (HasFreeArea(regions, tx, ty, 1, 2));
+                                });
         }
 
 #if UNITY_EDITOR
