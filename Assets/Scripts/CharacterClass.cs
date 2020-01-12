@@ -6,4 +6,6 @@ using UnityEngine;
 public class CharacterClass : ScriptableObject
 {
     public RuntimeAnimatorController    controller;
+    public Weapon                       weapon;
+    public bool                         allowKnockback = true;
 }

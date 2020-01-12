@@ -34,6 +34,18 @@ MonoBehaviour:
   gfx: {fileID: 5776422402396628554}
   controlMap: {fileID: 11400000, guid: c12c7e839649e3e4fbcf5d02c2839284, type: 2}
   moveSpeed: 1.5
+--- !u!114 &2738133426732148240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5776422402396628554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb20754052787e4489df257b833f77da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4725857925008570666
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -41,15 +53,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1278009850030695674, guid: 25792b0e1f755034e85a98fc1fad5047,
-        type: 3}
-      propertyPath: m_Name
-      value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 1278009850030695674, guid: 25792b0e1f755034e85a98fc1fad5047,
+    - target: {fileID: 1278009848116289376, guid: 25792b0e1f755034e85a98fc1fad5047,
         type: 3}
       propertyPath: m_Layer
       value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1278009848116289379, guid: 25792b0e1f755034e85a98fc1fad5047,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.063
+      objectReference: {fileID: 0}
+    - target: {fileID: 1278009848116289379, guid: 25792b0e1f755034e85a98fc1fad5047,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.017
       objectReference: {fileID: 0}
     - target: {fileID: 1278009850030695654, guid: 25792b0e1f755034e85a98fc1fad5047,
         type: 3}
@@ -106,20 +123,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1278009848116289376, guid: 25792b0e1f755034e85a98fc1fad5047,
+    - target: {fileID: 1278009850030695674, guid: 25792b0e1f755034e85a98fc1fad5047,
+        type: 3}
+      propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 1278009850030695674, guid: 25792b0e1f755034e85a98fc1fad5047,
         type: 3}
       propertyPath: m_Layer
       value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 1278009848116289379, guid: 25792b0e1f755034e85a98fc1fad5047,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.063
-      objectReference: {fileID: 0}
-    - target: {fileID: 1278009848116289379, guid: 25792b0e1f755034e85a98fc1fad5047,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.017
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 25792b0e1f755034e85a98fc1fad5047, type: 3}

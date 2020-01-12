@@ -42,6 +42,6 @@ LPC art made available through the [GPLv3] and [CC-BY-SA 3.0.] licenses.
 [CC-BY-SA 3.0.]:http://creativecommons.org/licenses/by-sa/3.0/
 [CC BY-NC-SA 4.0]:https://creativecommons.org/licenses/by-nc-sa/4.0/
 [Bfxr]:https://www.bfxr.net/
-[Universal LPC Spritesheet Character Generator]:https://sanderfrenken.github.io/
+[Universal LPC Spritesheet Character Generator]:https://sanderfrenken.github.io/Universal-LPC-Spritesheet-Character-Generator/
 [Universal LPC Spritesheet Unity Importer]:https://github.com/bitcula/Universal-LPC-Spritesheet-Unity-Importer
 [Generate Random Cave Levels Using Cellular Automata]:https://gamedevelopment.tutsplus.com/tutorials/generate-random-cave-levels-using-cellular-automata--gamedev-9664
