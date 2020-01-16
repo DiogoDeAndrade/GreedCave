@@ -29,6 +29,11 @@ public class EnemyCharacterInterface : CharacterInterface
         pathDestination = currentTarget = spawnPos;
     }
 
+    protected override void ActualMove(Vector3 toMove)
+    {
+        transform.position += toMove * Time.fixedDeltaTime;
+    }
+
     protected void Update()
     {
         if (character.isDead)
@@ -72,21 +77,21 @@ public class EnemyCharacterInterface : CharacterInterface
         {
             Vector3 toTarget = (currentTarget - transform.position).x0z();
             toTarget = toTarget.normalized * Mathf.Clamp(toTarget.magnitude, 0.0f, moveSpeed * Time.deltaTime);
-            
-            if (toTarget.sqrMagnitude > 0.001f)
-            {
-                character.SetDesiredDir(toTarget.xz() * 10.0f);
-            }
 
-            transform.position += toTarget;
+            Vector3 dest = transform.position + toTarget;
+            
+            character.SetDesiredDir(toTarget.xz() * 10.0f);
+
+            deltaPos = toTarget / Time.fixedDeltaTime;
         }
     }
     
-    protected override void OnDeath()
+    public override void OnDeath()
     {
         character.EnableColliders(false);
         currentPath = null;
         currentTarget = pathDestination = transform.position;
+        deltaPos = Vector3.zero;
     }
 
     void Update_Patrol()

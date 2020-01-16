@@ -6,40 +6,16 @@ public class PlayerCharacterInterface : CharacterInterface
 {
     [Header("Player")]
     public ControllerMapping    controlMap;
-    public float                velocityY;
 
     CharacterController charController;
-    Vector3             deltaPos;
 
     protected void Start()
     {
         charController = GetComponent<CharacterController>();
     }
 
-    protected void FixedUpdate()
+    protected override void ActualMove(Vector3 toMove)
     {
-        // Apply gravity
-        if (!character.isGrounded)
-        {
-            velocityY += Physics.gravity.y * Time.fixedDeltaTime;
-
-        }
-        else
-        {
-            if (velocityY < 0.0f) velocityY = 0;
-        }
-
-        Vector3 toMove = deltaPos;
-
-        toMove.y = velocityY;
-
-        if (knockbackTime > 0.0f)
-        {
-            knockbackTime -= Time.deltaTime;
-
-            toMove += knockbackDir.x0z() * knockbackStrength;
-        }
-
         charController.Move(toMove * Time.fixedDeltaTime);
     }
 

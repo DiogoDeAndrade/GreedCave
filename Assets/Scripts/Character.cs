@@ -245,6 +245,7 @@ public class Character : MonoBehaviour
             timeSinceDeath = 0.0f;
 
             OnDeath();
+            charInterface.OnDeath();
         }
         else
         {
