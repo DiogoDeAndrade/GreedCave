@@ -17,23 +17,24 @@ public class Character : MonoBehaviour
     protected Animator          animator;
     protected SpriteRenderer    spriteRenderer;
     protected Vector2           desiredDir;
-    protected float             knockbackTime = 0;
-    protected float             knockbackStrength = 0;
-    protected Vector3           knockbackDir;
     protected Vector2           lastMoveDir = new Vector2(0.0f, -1.0f);
     protected float             attackCooldown;
     protected Stats             currentStats;
     protected float             animSpeed = 1.0f;
-    protected float             timeSinceDeath;
+    [HideInInspector]
+    public float                timeSinceDeath;
     [ShowNonSerializedField]
     protected float             currentHP;
 
-    Coroutine   flashCR;
-    Material    spriteMaterial;
-    Stats       baseStats;
-    bool        damageAlreadyApplied = false;
+    Coroutine           flashCR;
+    Material            spriteMaterial;
+    Stats               baseStats;
+    bool                damageAlreadyApplied = false;
+    CharacterInterface  charInterface;
+    float               invulnerabilityTimer = 0.0f;
+    float               invulnerabilitySubTimer = 0.0f;
 
-    protected bool isGrounded
+    public bool isGrounded
     {
         get
         {
@@ -41,7 +42,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    protected bool isDead
+    public bool isDead
     {
         get
         {
@@ -49,11 +50,25 @@ public class Character : MonoBehaviour
         }
     }
 
-    protected bool isInvulnerable
+    public bool isInvulnerable
     {
         get
         {
+            if (invulnerabilityTimer > 0) return true;
+
             return isDead;
+        }
+        set
+        {
+            if (value)
+            {
+                invulnerabilityTimer = 2.0f;
+                invulnerabilitySubTimer = 0.0f;
+            }
+            else
+            {
+                invulnerabilityTimer = 0.0f;
+            }
         }
     }
 
@@ -61,6 +76,7 @@ public class Character : MonoBehaviour
     {
         animator = gfx.GetComponent<Animator>();
         spriteRenderer = gfx.GetComponent<SpriteRenderer>();
+        charInterface = GetComponent<CharacterInterface>();
         spriteMaterial = spriteRenderer.material;
 
         animator.runtimeAnimatorController = characterClass.controller;
@@ -87,6 +103,11 @@ public class Character : MonoBehaviour
 
         shape.spriteRenderer = spriteRenderer;
         shape.texture = spriteRenderer.sprite.texture;
+    }
+
+    public void SetDesiredDir(Vector2 dir)
+    {
+        desiredDir = dir;
     }
 
     protected virtual void Update()
@@ -118,6 +139,24 @@ public class Character : MonoBehaviour
         {
             timeSinceDeath += Time.deltaTime;
         }
+
+        if (invulnerabilityTimer > 0)
+        {
+            invulnerabilityTimer -= Time.deltaTime;
+            if (invulnerabilityTimer <= 0)
+            {
+                spriteRenderer.enabled = true;
+            }
+            else
+            {
+                invulnerabilitySubTimer += Time.deltaTime;
+                if (invulnerabilitySubTimer > 0.1f)
+                {
+                    spriteRenderer.enabled = !spriteRenderer.enabled;
+                    invulnerabilitySubTimer = 0.0f;
+                }
+            }
+        }
     }
 
     void UpdateStats()
@@ -125,7 +164,7 @@ public class Character : MonoBehaviour
         currentStats = baseStats.Clone();
     }
 
-    protected bool RunAttack()
+    public bool RunAttack()
     {
         if (characterClass.weapon == null) return false;
         if (attackCooldown > 0) return false;
@@ -202,7 +241,7 @@ public class Character : MonoBehaviour
         {
             animator.SetTrigger("Death");
             spriteRenderer.enabled = false;
-            deathPS.gameObject.SetActive(true);
+            deathPS.Play();
             timeSinceDeath = 0.0f;
 
             OnDeath();
@@ -213,21 +252,23 @@ public class Character : MonoBehaviour
 
             if ((weapon.knockback) && (characterClass.allowKnockback))
             {
-                DoKnockback(weapon.knockbackTime, weapon.knockbackStrength, transform.position - damageSourcePos);
+                charInterface.DoKnockback(weapon.knockbackTime, weapon.knockbackStrength, transform.position - damageSourcePos);
             }
         }
+    }
+
+    public void Respawn()
+    {
+        animator.SetTrigger("Reset");
+        currentHP = currentStats.Get(StatType.MaxHP);
+        spriteRenderer.enabled = true;
+        timeSinceDeath = 0.0f;
+        isInvulnerable = true;
     }
 
     protected virtual void OnDeath()
     {
 
-    }
-
-    protected virtual void DoKnockback(float time, float strength, Vector3 dir)
-    {
-        knockbackTime = time;
-        knockbackStrength = strength;
-        knockbackDir = dir;
     }
 
     public void Flash(Color c)
@@ -278,12 +319,27 @@ public class Character : MonoBehaviour
         }//*/
     }
 
-    protected void EnableColliders(bool b)
+    public void EnableColliders(bool b)
     {
         Collider[] colliders = GetComponentsInChildren<Collider>();
         foreach (var collider in colliders)
         {
             collider.enabled = b;
         }
+    }
+
+    static public bool AllAreDead()
+    {
+        PlayerCharacterInterface[] players = GameObject.FindObjectsOfType<PlayerCharacterInterface>();
+        
+        foreach (var player in players)
+        {
+            if (!player.character.isDead)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
