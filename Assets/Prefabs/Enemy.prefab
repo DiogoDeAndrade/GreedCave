@@ -17,6 +17,7 @@ MonoBehaviour:
   level: 1
   combatDamageEnabled: 1
   combatTextSpawnPoint: {fileID: 2404250605242664053}
+  deathPS: {fileID: 1814828761509533401}
   wanderRadius: 10
 --- !u!195 &5897908683175662954
 NavMeshAgent:
@@ -47,7 +48,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1278009848116289376, guid: 25792b0e1f755034e85a98fc1fad5047,
+    - target: {fileID: 1278009850030695674, guid: 25792b0e1f755034e85a98fc1fad5047,
+        type: 3}
+      propertyPath: m_Name
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 1278009850030695674, guid: 25792b0e1f755034e85a98fc1fad5047,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -107,12 +113,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1278009850030695674, guid: 25792b0e1f755034e85a98fc1fad5047,
-        type: 3}
-      propertyPath: m_Name
-      value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 1278009850030695674, guid: 25792b0e1f755034e85a98fc1fad5047,
+    - target: {fileID: 1278009848116289376, guid: 25792b0e1f755034e85a98fc1fad5047,
         type: 3}
       propertyPath: m_Layer
       value: 10
@@ -134,6 +135,12 @@ GameObject:
 --- !u!4 &2404250605242664053 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5264385030292647451, guid: 25792b0e1f755034e85a98fc1fad5047,
+    type: 3}
+  m_PrefabInstance: {fileID: 7517430701725837934}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1814828761509533401 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8177646595073637559, guid: 25792b0e1f755034e85a98fc1fad5047,
     type: 3}
   m_PrefabInstance: {fileID: 7517430701725837934}
   m_PrefabAsset: {fileID: 0}

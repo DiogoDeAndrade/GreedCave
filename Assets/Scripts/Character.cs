@@ -12,6 +12,7 @@ public class Character : MonoBehaviour
     [Header("Visuals")]
     public bool             combatDamageEnabled = true;
     public Transform        combatTextSpawnPoint;
+    public ParticleSystem   deathPS;
 
     protected Animator          animator;
     protected SpriteRenderer    spriteRenderer;
@@ -23,7 +24,7 @@ public class Character : MonoBehaviour
     protected float             attackCooldown;
     protected Stats             currentStats;
     protected float             animSpeed = 1.0f;
-
+    protected float             timeSinceDeath;
     [ShowNonSerializedField]
     protected float             currentHP;
 
@@ -69,6 +70,23 @@ public class Character : MonoBehaviour
         UpdateStats();
 
         currentHP = currentStats.Get(StatType.MaxHP);
+
+        StartCoroutine(LateStartCR());
+    }
+
+    IEnumerator LateStartCR()
+    {
+        yield return null;
+
+        InitFX();
+    }
+
+    void InitFX()
+    {
+        var shape = deathPS.shape;
+
+        shape.spriteRenderer = spriteRenderer;
+        shape.texture = spriteRenderer.sprite.texture;
     }
 
     protected virtual void Update()
@@ -94,6 +112,11 @@ public class Character : MonoBehaviour
                 animSpeed = 1.0f;
                 attackCooldown = 0;
             }
+        }
+
+        if (isDead)
+        {
+            timeSinceDeath += Time.deltaTime;
         }
     }
 
@@ -178,6 +201,11 @@ public class Character : MonoBehaviour
         if (currentHP <= 0)
         {
             animator.SetTrigger("Death");
+            spriteRenderer.enabled = false;
+            deathPS.gameObject.SetActive(true);
+            timeSinceDeath = 0.0f;
+
+            OnDeath();
         }
         else
         {
@@ -188,6 +216,11 @@ public class Character : MonoBehaviour
                 DoKnockback(weapon.knockbackTime, weapon.knockbackStrength, transform.position - damageSourcePos);
             }
         }
+    }
+
+    protected virtual void OnDeath()
+    {
+
     }
 
     protected virtual void DoKnockback(float time, float strength, Vector3 dir)
@@ -243,5 +276,14 @@ public class Character : MonoBehaviour
                 Gizmos.DrawWireSphere(damagePos, characterClass.weapon.attackRadius);
             }
         }//*/
+    }
+
+    protected void EnableColliders(bool b)
+    {
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach (var collider in colliders)
+        {
+            collider.enabled = b;
+        }
     }
 }

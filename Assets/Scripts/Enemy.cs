@@ -25,7 +25,16 @@ public class Enemy : Character
 
     protected override void Update()
     {
-        if (isDead) return;
+        base.Update();
+
+        if (isDead)
+        {
+            if (timeSinceDeath > 4.0f)
+            {
+                Destroy(gameObject);
+            }
+            return;
+        }
 
         switch (state)
         {
@@ -36,8 +45,12 @@ public class Enemy : Character
 
         lastMoveDir = agent.velocity.xz();
         desiredDir = lastMoveDir * agent.velocity.magnitude;
-
-        base.Update();
+    }
+    
+    protected override void OnDeath()
+    {
+        EnableColliders(false);
+        agent.Stop();
     }
 
     void Update_Patrol()
