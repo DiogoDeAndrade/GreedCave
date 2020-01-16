@@ -14,3 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 22100000, guid: 795f80b6dff1811479403060bda095f9, type: 2}
   weapon: {fileID: 11400000, guid: 5cadb464c4b245e409c491c020898d2b, type: 2}
+  allowKnockback: 1
+  baseStats:
+    constitution: 5
+    strength: 5
+    intelect: 1
+    dexterity: 2
+    spirit: 2
+  autoLevelUp:
+    constitution: 1
+    strength: 1
+    intelect: 0
+    dexterity: 0
+    spirit: 0

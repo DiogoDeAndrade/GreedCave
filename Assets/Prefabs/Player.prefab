@@ -32,8 +32,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterClass: {fileID: 11400000, guid: 4c6e4e658fe669746b9b71b29d4e1456, type: 2}
   gfx: {fileID: 5776422402396628554}
+  level: 1
+  combatDamageEnabled: 1
+  combatTextSpawnPoint: {fileID: 620165194703935281}
   controlMap: {fileID: 11400000, guid: c12c7e839649e3e4fbcf5d02c2839284, type: 2}
   moveSpeed: 1.5
+  velocityY: 0
 --- !u!114 &2738133426732148240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +148,12 @@ GameObject:
 --- !u!1 &5776422402396628554 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1278009848116289376, guid: 25792b0e1f755034e85a98fc1fad5047,
+    type: 3}
+  m_PrefabInstance: {fileID: 4725857925008570666}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &620165194703935281 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5264385030292647451, guid: 25792b0e1f755034e85a98fc1fad5047,
     type: 3}
   m_PrefabInstance: {fileID: 4725857925008570666}
   m_PrefabAsset: {fileID: 0}

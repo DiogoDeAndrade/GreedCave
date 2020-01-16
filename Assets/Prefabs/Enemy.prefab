@@ -15,6 +15,9 @@ MonoBehaviour:
   characterClass: {fileID: 11400000, guid: 6f21950d4015d984ba4033f5a7cd6600, type: 2}
   gfx: {fileID: 8786276906389992718}
   level: 1
+  combatDamageEnabled: 1
+  combatTextSpawnPoint: {fileID: 2404250605242664053}
+  wanderRadius: 10
 --- !u!195 &5897908683175662954
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -125,6 +128,12 @@ GameObject:
 --- !u!1 &8786276906389992718 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1278009848116289376, guid: 25792b0e1f755034e85a98fc1fad5047,
+    type: 3}
+  m_PrefabInstance: {fileID: 7517430701725837934}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2404250605242664053 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5264385030292647451, guid: 25792b0e1f755034e85a98fc1fad5047,
     type: 3}
   m_PrefabInstance: {fileID: 7517430701725837934}
   m_PrefabAsset: {fileID: 0}

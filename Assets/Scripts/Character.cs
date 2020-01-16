@@ -8,6 +8,10 @@ public class Character : MonoBehaviour
     public GameObject       gfx;
     public int              level = 1;
 
+    [Header("Visuals")]
+    public bool             combatDamageEnabled = true;
+    public Transform        combatTextSpawnPoint;
+
     protected Animator          animator;
     protected SpriteRenderer    spriteRenderer;
     protected Vector2           desiredDir;
@@ -15,9 +19,13 @@ public class Character : MonoBehaviour
     protected float             knockbackStrength = 0;
     protected Vector3           knockbackDir;
     protected Vector2           lastMoveDir = new Vector2(0.0f, -1.0f);
+    protected float             attackCooldown;
+    protected Stats             currentStats;
+    protected float             animSpeed = 1.0f;
 
-    Coroutine flashCR;
+    Coroutine   flashCR;
     Material    spriteMaterial;
+    Stats       baseStats;
 
     protected bool isGrounded
     {
@@ -34,6 +42,10 @@ public class Character : MonoBehaviour
         spriteMaterial = spriteRenderer.material;
 
         animator.runtimeAnimatorController = characterClass.controller;
+
+        baseStats = characterClass.baseStats.Clone();
+
+        UpdateStats();
     }
 
     protected virtual void Update()
@@ -47,11 +59,30 @@ public class Character : MonoBehaviour
         animator.SetFloat("DirY", lastMoveDir.y);
 
         animator.SetFloat("Speed", desiredDir.magnitude);
+        animator.SetFloat("AnimSpeed", animSpeed);
+
+        UpdateStats();
+
+        if (attackCooldown > 0)
+        {
+            attackCooldown -= Time.deltaTime;
+            if (attackCooldown <= 0)
+            {
+                animSpeed = 1.0f;
+                attackCooldown = 0;
+            }
+        }
+    }
+
+    void UpdateStats()
+    {
+        currentStats = baseStats.Clone();
     }
 
     protected bool RunAttack()
     {
         if (characterClass.weapon == null) return false;
+        if (attackCooldown > 0) return false;
 
         switch (characterClass.weapon.animationType)
         {
@@ -71,7 +102,11 @@ public class Character : MonoBehaviour
                 break;
         }
 
-        return false;
+        float attackSpeedModifier = currentStats.Get(StatType.AttackSpeedModifier);
+        attackCooldown = characterClass.weapon.attackCooldown * attackSpeedModifier;
+        animSpeed = 1.0f / attackSpeedModifier;
+
+        return true;
     }
 
     public void DoMeleeDamage()
@@ -85,12 +120,17 @@ public class Character : MonoBehaviour
 
         damagePos = transform.position + characterClass.weapon.attackRadius * damagePos + Vector3.up;
 
+        // If a character has multiple colliders, it can be processed multiple times
+        List<Character> alreadyProcessed = new List<Character>();
+
         Collider[] colliders = Physics.OverlapSphere(damagePos, characterClass.weapon.attackRadius, LayerMask.GetMask("Player", "Enemy"));
         foreach (var collider in colliders)
         {
             Character character = collider.GetComponent<Character>();
-            if ((character != null) && (character != this))
+            if ((character != null) && (character != this) && (!alreadyProcessed.Contains(character)))
             {
+                alreadyProcessed.Add(character);
+
                 character.DealDamage(characterClass.weapon, characterClass.weapon.ComputeDamage(level), damagePos);
             }
         }
@@ -98,6 +138,11 @@ public class Character : MonoBehaviour
 
     public void DealDamage(Weapon weapon, float damage, Vector3 damageSourcePos)
     {
+        if (combatDamageEnabled)
+        {
+            CombatTextManager.SpawnText(combatTextSpawnPoint.gameObject, damage, "-{0}", new Color(1, 0, 0, 1), new Color(1, 0, 0, 0));
+        }
+
         Flash(Color.red);
 
         if ((weapon.knockback) && (characterClass.allowKnockback))

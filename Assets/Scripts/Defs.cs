@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum Direction { North, East, South, West };
+public enum StatType { Constitution = 0, Strength = 1, Intelect = 2, Dexterity = 3, Spirit = 4, 
+                       MaxHP, MaxResource, AttackSpeedModifier, PhysicalDamage, MagicalDamage, RangedDamage, CritRate, ResourceRegen, Dodge };
+
+static public class Consts
+{
+    public const int Stats = 5;
+};
 
 static public class Helper
 {

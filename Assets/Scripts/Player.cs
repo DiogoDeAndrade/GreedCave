@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : Character
 {
+    [Header("Player")]
     public ControllerMapping    controlMap;
     public float                moveSpeed = 1.5f;
     public float                velocityY;

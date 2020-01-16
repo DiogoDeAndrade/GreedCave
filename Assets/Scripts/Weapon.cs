@@ -9,8 +9,11 @@ public class Weapon : ScriptableObject
     public enum AnimType { Slash, Shoot, Thrust, Cast };
 
     public Type     type;
-    public float    baseDamage;
-    public float    damagePerLevel;
+
+    [Header("Weapon stats")]
+    public float baseDamage;
+    public float damagePerLevel;
+    public float attackCooldown = 1.0f;
 
     [Header("Collision detection and response")]
     public float    attackRadius = 1.0f;

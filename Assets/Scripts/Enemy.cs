@@ -7,6 +7,7 @@ public class Enemy : Character
 {
     enum State { Wander };
 
+    [Header("Enemy")]
     public float    wanderRadius = 10.0f;
 
     State           state;

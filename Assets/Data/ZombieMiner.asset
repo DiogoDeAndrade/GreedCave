@@ -15,3 +15,15 @@ MonoBehaviour:
   controller: {fileID: 22100000, guid: bea9b4c1f6a761942bb0bd0aa2cc29eb, type: 2}
   weapon: {fileID: 0}
   allowKnockback: 1
+  baseStats:
+    constitution: 1
+    strength: 1
+    intelect: 1
+    dexterity: 1
+    spirit: 1
+  autoLevelUp:
+    constitution: 0
+    strength: 0
+    intelect: 0
+    dexterity: 0
+    spirit: 0
