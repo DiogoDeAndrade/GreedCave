@@ -15,7 +15,7 @@ MonoBehaviour:
   type: 0
   baseDamage: 5
   damagePerLevel: 1
-  attackCooldown: 1
+  attackCooldown: 0.5
   attackRadius: 0.3
   knockbackTime: 0.2
   knockbackStrength: 3

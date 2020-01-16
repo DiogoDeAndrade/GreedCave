@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using NaughtyAttributes;
 
 public class Character : MonoBehaviour
 {
@@ -23,15 +24,35 @@ public class Character : MonoBehaviour
     protected Stats             currentStats;
     protected float             animSpeed = 1.0f;
 
+    [ShowNonSerializedField]
+    protected float             currentHP;
+
     Coroutine   flashCR;
     Material    spriteMaterial;
     Stats       baseStats;
+    bool        damageAlreadyApplied = false;
 
     protected bool isGrounded
     {
         get
         {
             return (transform.position.y < 0.1f);
+        }
+    }
+
+    protected bool isDead
+    {
+        get
+        {
+            return currentHP <= 0;
+        }
+    }
+
+    protected bool isInvulnerable
+    {
+        get
+        {
+            return isDead;
         }
     }
 
@@ -46,6 +67,8 @@ public class Character : MonoBehaviour
         baseStats = characterClass.baseStats.Clone();
 
         UpdateStats();
+
+        currentHP = currentStats.Get(StatType.MaxHP);
     }
 
     protected virtual void Update()
@@ -106,11 +129,17 @@ public class Character : MonoBehaviour
         attackCooldown = characterClass.weapon.attackCooldown * attackSpeedModifier;
         animSpeed = 1.0f / attackSpeedModifier;
 
+        damageAlreadyApplied = false;
+
         return true;
     }
 
     public void DoMeleeDamage()
     {
+        if (damageAlreadyApplied) return;
+
+        damageAlreadyApplied = true;
+
         // Check where player is facing
         var dir = Helper.GetDirectionFromVector(lastMoveDir);
 
@@ -123,11 +152,12 @@ public class Character : MonoBehaviour
         // If a character has multiple colliders, it can be processed multiple times
         List<Character> alreadyProcessed = new List<Character>();
 
+        // The event can also be called multiple times because of the blend trees, need to check if this damage has already been applied
         Collider[] colliders = Physics.OverlapSphere(damagePos, characterClass.weapon.attackRadius, LayerMask.GetMask("Player", "Enemy"));
         foreach (var collider in colliders)
         {
             Character character = collider.GetComponent<Character>();
-            if ((character != null) && (character != this) && (!alreadyProcessed.Contains(character)))
+            if ((character != null) && (character != this) && (!alreadyProcessed.Contains(character)) && (!character.isInvulnerable))
             {
                 alreadyProcessed.Add(character);
 
@@ -140,14 +170,23 @@ public class Character : MonoBehaviour
     {
         if (combatDamageEnabled)
         {
-            CombatTextManager.SpawnText(combatTextSpawnPoint.gameObject, damage, "-{0}", new Color(1, 0, 0, 1), new Color(1, 0, 0, 0));
+            CombatTextManager.SpawnText(combatTextSpawnPoint.gameObject, damage, "-{0}", new Color(0.7f, 0.2f, 0.2f, 1), new Color(0.7f, 0.2f, 0.2f, 0));
         }
 
-        Flash(Color.red);
+        currentHP -= damage;
 
-        if ((weapon.knockback) && (characterClass.allowKnockback))
+        if (currentHP <= 0)
         {
-            DoKnockback(weapon.knockbackTime, weapon.knockbackStrength, transform.position - damageSourcePos);
+            animator.SetTrigger("Death");
+        }
+        else
+        {
+            Flash(Color.red);
+
+            if ((weapon.knockback) && (characterClass.allowKnockback))
+            {
+                DoKnockback(weapon.knockbackTime, weapon.knockbackStrength, transform.position - damageSourcePos);
+            }
         }
     }
 

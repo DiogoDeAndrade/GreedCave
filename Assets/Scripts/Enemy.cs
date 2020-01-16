@@ -25,6 +25,8 @@ public class Enemy : Character
 
     protected override void Update()
     {
+        if (isDead) return;
+
         switch (state)
         {
             case State.Wander:
